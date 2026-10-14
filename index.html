@@ -1,0 +1,388 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Tharshikan &amp; Jananny — Wedding Invitation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,500;1,600&family=Noto+Serif+Tamil:wght@500&display=swap">
+<style>
+/* Layout: one centred square "table" on deep emerald; envelope → vellum gatefold → two-sided card, each stacked in the same square. */
+:root {
+  --ground: #10322a;
+  --ground-deep: #0a221c;
+  --glow: rgba(214, 178, 104, 0.16);
+  --ink: #f3e8cf;
+  --ink-soft: rgba(243, 232, 207, 0.72);
+  --gold: #c9a25a;
+  --gold-deep: #9c7530;
+  --gold-hi: #f1d897;
+  --vellum: #fbf5e6;
+  --font-display: "Cinzel", "Trajan Pro", "Times New Roman", serif;
+  --font-body: "Cormorant Garamond", "Cambria", Georgia, serif;
+  --font-tamil: "Noto Serif Tamil", "Latha", serif;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  background: radial-gradient(120% 80% at 50% 38%, #18463a 0%, var(--ground) 45%, var(--ground-deep) 100%), var(--ground);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 18px;
+  overflow-x: hidden;
+}
+.page {
+  min-height: 100%;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: clamp(14px, 2.4vh, 24px);
+  padding-inline: 16px; padding-block: clamp(16px, 3vh, 36px);
+  text-align: center;
+  overflow-x: clip;
+}
+header { display: grid; gap: 4px; }
+.eyebrow {
+  margin: 0; font-family: var(--font-display); font-size: 12px; letter-spacing: 0.32em;
+  text-transform: uppercase; color: var(--gold);
+}
+h1 {
+  margin: 0; font-family: var(--font-display); font-weight: 500;
+  font-size: clamp(22px, 4.4vw, 32px); letter-spacing: 0.08em; text-wrap: balance;
+  color: var(--ink);
+}
+h1 .amp { font-family: var(--font-body); font-style: italic; color: var(--gold); padding-inline: 0.15em; }
+
+/* ---------- stage ---------- */
+.stage {
+  position: relative;
+  width: min(100%, 600px, calc(100vh - 250px));
+  width: min(100%, 600px, calc(100svh - 250px));
+  min-width: min(100%, 300px);
+  aspect-ratio: 1;
+  max-width: 100%;
+}
+.stage::before { /* soft lamplight behind the paper */
+  content: ""; position: absolute; inset: -10%; border-radius: 50%;
+  background: radial-gradient(closest-side, var(--glow), transparent);
+  pointer-events: none;
+}
+.layer { position: absolute; inset: 0; }
+.paper { box-shadow: 0 30px 60px -20px rgba(0,0,0,.55), 0 8px 18px -8px rgba(0,0,0,.45); }
+.layer img { display: block; width: 100%; height: 100%; object-fit: cover; user-select: none; -webkit-user-drag: none; }
+
+/* foil shimmer: a moving highlight clipped to the gold-foil areas */
+.foil {
+  position: absolute; inset: 0; pointer-events: none;
+  -webkit-mask-size: 100% 100%; mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+  background: linear-gradient(110deg, transparent 38%, rgba(255, 244, 210, 0) 42%, rgba(255, 244, 210, .9) 50%, rgba(255, 244, 210, 0) 58%, transparent 62%);
+  background-size: 300% 100%;
+  background-position: 120% 0;
+  opacity: .85;
+}
+.shine .foil { animation: sweep 2.6s cubic-bezier(.45,.05,.35,1) .15s 1 both; }
+@keyframes sweep { from { background-position: 120% 0; } to { background-position: -20% 0; } }
+
+/* envelope */
+.envelope {
+  border: 0; padding: 0; margin: 0; background: none; cursor: pointer; z-index: 3;
+  transition: transform 1s cubic-bezier(.6,-0.05,.3,1), opacity .8s ease .25s;
+}
+.envelope:focus-visible, .door-btn:focus-visible, .card-btn:focus-visible { outline: 2px solid var(--gold-hi); outline-offset: 6px; }
+.addressee {
+  position: absolute; left: 50%; top: 41.5%; transform: translate(-50%, -50%);
+  width: 70%; display: grid; gap: .25em; pointer-events: none;
+}
+.addressee small {
+  font-family: var(--font-display); font-size: clamp(9px, 1.9cqw, 12px); letter-spacing: .3em;
+  text-transform: uppercase; color: #8a6a2c;
+}
+.addressee span {
+  font-family: var(--font-body); font-style: italic; font-weight: 600;
+  font-size: clamp(18px, 4.6cqw, 30px); line-height: 1.1; color: #8f6a24; text-wrap: balance;
+}
+.stage { container-type: inline-size; }
+
+.stage[data-step="1"] .envelope, .stage[data-step="2"] .envelope {
+  transform: translateY(70%) rotate(-5deg) scale(.86); opacity: 0; pointer-events: none;
+}
+.stage[data-step="2"] .envelope { visibility: hidden; }
+
+/* vellum gatefold */
+.jacket { z-index: 2; perspective: 1800px; opacity: 0; transform: scale(.96); transition: opacity .7s ease .35s, transform .9s cubic-bezier(.2,.7,.2,1) .35s; }
+.stage[data-step="1"] .jacket, .stage[data-step="2"] .jacket { opacity: 1; transform: none; }
+.door {
+  position: absolute; top: 0; bottom: 0; width: 50%; overflow: hidden;
+  backface-visibility: hidden; -webkit-backface-visibility: hidden;
+  transition: transform 1.5s cubic-bezier(.55,.05,.25,1), opacity .5s ease 1.05s;
+}
+.door::after { /* butter-paper sheen */
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(160deg, rgba(255,255,255,.35), rgba(255,255,255,0) 35%, rgba(255,255,255,.12) 70%, rgba(255,255,255,0));
+}
+.door.l { left: 0; transform-origin: left center; box-shadow: inset -1px 0 0 rgba(120, 95, 50, .25); }
+.door.r { right: 0; transform-origin: right center; box-shadow: inset 1px 0 0 rgba(120, 95, 50, .25); }
+.stage[data-step="2"] .door.l { transform: rotateY(-100deg); opacity: 0; }
+.stage[data-step="2"] .door.r { transform: rotateY(100deg); opacity: 0; }
+.stage[data-step="2"] .jacket { pointer-events: none; }
+.door-btn { position: absolute; inset: 0; z-index: 2; border: 0; background: none; cursor: pointer; padding: 0; }
+
+/* the two-sided card */
+.card3d { z-index: 1; perspective: 2200px; opacity: 0; transition: opacity .3s ease .4s; }
+.stage[data-step="1"] .card3d, .stage[data-step="2"] .card3d { opacity: 1; }
+.card { position: absolute; inset: 0; transform-style: preserve-3d; transition: transform 1.1s cubic-bezier(.45,.05,.25,1); }
+.card.flipped { transform: rotateY(180deg); }
+.face { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; overflow: hidden; }
+.face.back { transform: rotateY(180deg); }
+.card-btn { position: absolute; inset: 0; z-index: 4; border: 0; background: none; cursor: pointer; padding: 0; }
+.stage:not([data-step="2"]) .card-btn { pointer-events: none; }
+.guest {
+  position: absolute; left: 49.6%; top: 39.75%; transform: translate(-50%, -100%);
+  white-space: nowrap; overflow: visible;
+  font-family: var(--font-body); font-style: italic; font-weight: 600;
+  font-size: 2.35cqw; line-height: 1; color: #8a6420; pointer-events: none;
+}
+
+/* ---------- below the stage ---------- */
+.hint {
+  margin: 0; min-height: 1.4em; font-style: italic; font-size: 18px; color: var(--ink-soft);
+  animation: breathe 2.8s ease-in-out infinite;
+}
+@keyframes breathe { 50% { opacity: .55; } }
+.controls { display: grid; gap: 16px; justify-items: center; width: min(100%, 600px); }
+.lang {
+  display: inline-flex; padding: 4px; border-radius: 999px; gap: 2px;
+  border: 1px solid rgba(201, 162, 90, .45); background: rgba(0,0,0,.18);
+}
+.lang button {
+  appearance: none; border: 0; border-radius: 999px; cursor: pointer;
+  padding: 8px 20px; min-width: 104px; background: transparent; color: var(--ink-soft);
+  font-family: var(--font-display); font-size: 13px; letter-spacing: .14em; text-transform: uppercase;
+  transition: background .3s, color .3s;
+}
+.lang button[lang="ta"] { font-family: var(--font-tamil); letter-spacing: 0; text-transform: none; font-size: 14px; }
+.lang button[aria-pressed="true"] { background: linear-gradient(135deg, var(--gold-hi), var(--gold) 55%, var(--gold-deep)); color: #2a1d08; }
+.lang button:focus-visible, .actions a:focus-visible, .replay:focus-visible { outline: 2px solid var(--gold-hi); outline-offset: 3px; }
+.actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+.actions a {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 10px 18px; border-radius: 999px; text-decoration: none;
+  border: 1px solid rgba(201, 162, 90, .55); color: var(--ink);
+  font-family: var(--font-display); font-size: 12.5px; letter-spacing: .14em; text-transform: uppercase;
+  transition: background .25s, border-color .25s;
+}
+.actions a:hover { background: rgba(201, 162, 90, .14); border-color: var(--gold); }
+.actions svg { width: 15px; height: 15px; stroke: var(--gold); fill: none; stroke-width: 1.6; }
+.meta { margin: 0; font-size: 17px; color: var(--ink-soft); }
+.meta b { font-weight: 500; color: var(--ink); }
+.replay {
+  appearance: none; border: 0; background: none; cursor: pointer; color: var(--gold);
+  font-family: var(--font-body); font-style: italic; font-size: 16px; text-decoration: underline; text-underline-offset: 3px;
+}
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+#petals { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10; }
+
+@media (prefers-reduced-motion: reduce) {
+  .envelope, .jacket, .door, .card, .card3d { transition-duration: .01s !important; transition-delay: 0s !important; }
+  .shine .foil, .hint { animation: none; }
+}
+</style>
+</head>
+<body>
+<main class="page">
+  <header>
+    <p class="eyebrow">Wedding Invitation</p>
+    <h1>Tharshikan <span class="amp">&amp;</span> Jananny</h1>
+  </header>
+
+  <div class="stage" id="stage" data-step="0">
+    <div class="layer card3d">
+      <div class="card" id="card">
+        <div class="face front paper" id="faceFront">
+          <img src="card-en.webp" alt="" draggable="false">
+          <div class="foil" style="-webkit-mask-image:url(card-en-mask.png);mask-image:url(card-en-mask.png)"></div>
+          <div class="guest" id="guestLine" hidden></div>
+        </div>
+        <div class="face back paper" id="faceBack">
+          <img src="card-ta.webp" alt="" draggable="false">
+        </div>
+      </div>
+      <button class="card-btn" id="cardBtn" type="button" aria-label="Turn the card over"></button>
+    </div>
+
+    <div class="layer jacket" id="jacket">
+      <div class="door l paper">
+        <img src="door-l.webp" alt="" draggable="false">
+        <div class="foil" style="-webkit-mask-image:url(door-l-mask.png);mask-image:url(door-l-mask.png)"></div>
+      </div>
+      <div class="door r paper">
+        <img src="door-r.webp" alt="" draggable="false">
+        <div class="foil" style="-webkit-mask-image:url(door-r-mask.png);mask-image:url(door-r-mask.png)"></div>
+      </div>
+      <button class="door-btn" id="doorBtn" type="button" aria-label="Open the folded invitation" tabindex="-1"></button>
+    </div>
+
+    <button class="layer envelope paper" id="envelope" type="button" aria-label="Open the envelope">
+      <img src="envelope.webp" alt="" draggable="false">
+      <div class="foil" style="-webkit-mask-image:url(envelope-mask.png);mask-image:url(envelope-mask.png)"></div>
+      <div class="addressee" id="addressee" hidden><small>For</small><span id="addresseeName"></span></div>
+    </button>
+  </div>
+
+  <p class="hint" id="hint" aria-live="polite">Tap the envelope to open</p>
+
+  <section class="controls" id="controls" hidden>
+    <div class="lang" role="group" aria-label="Card language">
+      <button type="button" id="btnEn" lang="en" aria-pressed="true">English</button>
+      <button type="button" id="btnTa" lang="ta" aria-pressed="false">தமிழ்</button>
+    </div>
+    <p class="meta"><b>Sunday, 15 November 2026</b> · Muhurtham 10:01–11:30 a.m.<br>Scarborough Convention Centre<span id="countdown"></span></p>
+    <nav class="actions" aria-label="Invitation links">
+      <a id="calLink" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>Add to calendar</a>
+      <a id="mapLink" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-6.5-6.2-6.5-11a6.5 6.5 0 0 1 13 0c0 4.8-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.3"/></svg>Directions</a>
+    </nav>
+    <button class="replay" type="button" id="replay">Open the envelope again</button>
+  </section>
+
+  <div class="sr" id="invitationText">
+    <h2>Wedding Invitation</h2>
+    <p>Mr. &amp; Mrs. Sanmugavadivel and Mr. &amp; Mrs. Thamilchelvan cordially request the presence of <span id="srGuest">you</span> to bless the occasion of the marriage of their son S. Tharshikan and their daughter T. Jananny, as they celebrate the beginning of their journey as two families unite.</p>
+    <p>At the auspicious time between 10:01 a.m. and 11:30 a.m. on Sunday, 15 November 2026, at Scarborough Convention Centre, 20 Torham Pl, Scarborough, ON M1X 0B3.</p>
+    <p>Mr. &amp; Mrs. Sanmugavadivel, 1859 Arborwood Drive, Oshawa, ON L1K 0R3. Mr. &amp; Mrs. Thamilchelvan, 552 Alexis Court, Mississauga, ON L4Z 3Z8. Both party invitation.</p>
+  </div>
+</main>
+<canvas id="petals" aria-hidden="true"></canvas>
+
+<script>
+(() => {
+  const stage = document.getElementById('stage');
+  const card = document.getElementById('card');
+  const hint = document.getElementById('hint');
+  const controls = document.getElementById('controls');
+  const envelope = document.getElementById('envelope');
+  const doorBtn = document.getElementById('doorBtn');
+  const cardBtn = document.getElementById('cardBtn');
+  const btnEn = document.getElementById('btnEn');
+  const btnTa = document.getElementById('btnTa');
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Guest name from the link: …#The_Kumar_Family  (underscores become spaces, ~ becomes &)
+  const raw = decodeURIComponent((location.hash || '').slice(1));
+  const guest = raw.replace(/_/g, ' ').replace(/~/g, ' & ').replace(/\s+/g, ' ').trim();
+  if (guest && /^[\p{L}\p{N} .&-]{1,60}$/u.test(guest)) {
+    document.getElementById('addresseeName').textContent = guest;
+    document.getElementById('addressee').hidden = false;
+    const line = document.getElementById('guestLine');
+    line.textContent = guest;
+    line.hidden = false;
+    document.getElementById('srGuest').textContent = guest;
+    // shrink long names so they sit on the printed line
+    const fit = () => {
+      line.style.fontSize = '';
+      const max = line.parentElement.clientWidth * 0.34;
+      const w = line.scrollWidth;
+      if (w > max) line.style.fontSize = (parseFloat(getComputedStyle(line).fontSize) * max / w) + 'px';
+    };
+    new ResizeObserver(fit).observe(stage);
+    document.fonts && document.fonts.ready.then(fit);
+  }
+
+  // Links
+  const loc = 'Scarborough Convention Centre, 20 Torham Pl, Scarborough, ON M1X 0B3';
+  const cal = new URL('https://calendar.google.com/calendar/render');
+  cal.search = new URLSearchParams({
+    action: 'TEMPLATE',
+    text: 'Wedding of Tharshikan & Jananny',
+    dates: '20261115T100100/20261115T113000',
+    ctz: 'America/Toronto',
+    location: loc,
+    details: 'Muhurtham between 10:01 and 11:30 a.m.'
+  }).toString();
+  document.getElementById('calLink').href = cal.toString();
+  document.getElementById('mapLink').href = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(loc);
+
+  // Countdown
+  const wedding = new Date('2026-11-15T10:01:00-05:00');
+  const days = Math.ceil((wedding - new Date()) / 86400000);
+  if (days > 1) document.getElementById('countdown').textContent = ' · ' + days + ' days to go';
+  else if (days === 1) document.getElementById('countdown').textContent = ' · Tomorrow';
+
+  const shine = el => { el.classList.remove('shine'); void el.offsetWidth; el.classList.add('shine'); };
+  shine(envelope);
+
+  function setStep(n) {
+    stage.dataset.step = String(n);
+    envelope.tabIndex = n === 0 ? 0 : -1;
+    doorBtn.tabIndex = n === 1 ? 0 : -1;
+    cardBtn.tabIndex = n === 2 ? 0 : -1;
+    if (n === 0) { hint.textContent = 'Tap the envelope to open'; controls.hidden = true; }
+    if (n === 1) {
+      hint.textContent = 'Tap to unfold';
+      setTimeout(() => { shine(document.getElementById('jacket')); doorBtn.focus({ preventScroll: true }); }, reduce ? 0 : 900);
+    }
+    if (n === 2) {
+      hint.textContent = 'Tap the card to turn it over';
+      setTimeout(() => {
+        controls.hidden = false;
+        shine(document.getElementById('faceFront'));
+      }, reduce ? 0 : 900);
+      if (!reduce) petals();
+    }
+  }
+  function flip(toTamil) {
+    card.classList.toggle('flipped', toTamil);
+    btnEn.setAttribute('aria-pressed', String(!toTamil));
+    btnTa.setAttribute('aria-pressed', String(toTamil));
+    cardBtn.setAttribute('aria-label', toTamil ? 'Turn the card to the English side' : 'Turn the card to the Tamil side');
+  }
+
+  envelope.addEventListener('click', () => setStep(1));
+  doorBtn.addEventListener('click', () => setStep(2));
+  cardBtn.addEventListener('click', () => flip(!card.classList.contains('flipped')));
+  btnEn.addEventListener('click', () => flip(false));
+  btnTa.addEventListener('click', () => flip(true));
+  document.getElementById('replay').addEventListener('click', () => {
+    flip(false);
+    setStep(0);
+    setTimeout(() => { shine(envelope); envelope.focus({ preventScroll: true }); }, 300);
+    window.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' });
+  });
+
+  // Lotus petals drifting down when the invitation unfolds
+  function petals() {
+    const cv = document.getElementById('petals');
+    const ctx = cv.getContext('2d');
+    const dpr = Math.min(devicePixelRatio || 1, 2);
+    const W = cv.width = innerWidth * dpr, H = cv.height = innerHeight * dpr;
+    const colors = ['#f2b8c6', '#eaa0b4', '#f7d2db', '#e9c27a', '#f4dfa8'];
+    const ps = Array.from({ length: 46 }, (_, i) => ({
+      x: Math.random() * W, y: -Math.random() * H * 0.6 - 20 * dpr,
+      r: (6 + Math.random() * 7) * dpr, vy: (0.9 + Math.random() * 1.3) * dpr,
+      sway: Math.random() * Math.PI * 2, rot: Math.random() * Math.PI, vr: (Math.random() - .5) * .05,
+      c: colors[i % colors.length]
+    }));
+    const start = performance.now();
+    (function frame(t) {
+      const el = t - start;
+      ctx.clearRect(0, 0, W, H);
+      ctx.globalAlpha = el > 4200 ? Math.max(0, 1 - (el - 4200) / 1200) : 1;
+      for (const p of ps) {
+        p.y += p.vy; p.sway += 0.02; p.x += Math.sin(p.sway) * 0.8 * dpr; p.rot += p.vr;
+        ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.rot);
+        ctx.fillStyle = p.c;
+        ctx.beginPath(); ctx.ellipse(0, 0, p.r, p.r * 0.48, 0, 0, Math.PI * 2); ctx.fill();
+        ctx.restore();
+      }
+      if (el < 5400) requestAnimationFrame(frame); else ctx.clearRect(0, 0, W, H);
+    })(start);
+  }
+
+  setStep(0);
+})();
+</script>
+</body>
+</html>
